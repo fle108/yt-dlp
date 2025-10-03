@@ -1,0 +1,22 @@
+services:
+  nordvpn-container:
+    build: .
+    image: nordvpn-yt-dlp:latest
+    container_name: nordvpn_app
+    cap_add:
+      - NET_ADMIN               # Nécessaire pour la gestion du réseau
+      - SYS_MODULE              # Nécessaire pour charger les modules kernel
+    devices:
+      - /dev/net/tun            # Nécessaire pour le tunnel VPN
+    environment:
+      - NORDVPN_TOKEN=${NORDVPN_TOKEN}              # Définit dans .env
+      - NORDVPN_COUNTRY=${NORDVPN_COUNTRY:-France}  # Définit dans .env sinon France par défaut
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./downloads:/app/downloads
+      - nordvpn-data:/var/lib/nordvpn
+    restart: unless-stopped
+
+volumes:
+  nordvpn-data:
